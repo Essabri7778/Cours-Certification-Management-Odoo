@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <data>
+       
+        <!-- START CONTENT FORM VIEW -->
+        <record id="content_view_form" model="ir.ui.view">
+            <field name="name">content.view.form</field>
+            <field name="model">course_certification_management.content</field>
+            <field name="arch" type="xml">
+                <form string="Lesson">
+                    <sheet>
+                        <field name="image" widget="image" class="oe_avatar"/>
+                        <div class="oe_title">
+                            <div>
+                                <label for="title" string="Content Title" class="oe_edit_only"/>
+                            </div>
+                            <h1>
+                                <field name="title" default_focus="1" placeholder="e.g. How to grow your business with Odoo?"/>
+                                
+                            </h1>
+                            <!-- <field name="tag_ids" attrs="{'invisible': [('is_category', '=', True)]}" widget="many2many_tags" placeholder="Tags..."/> -->
+                        </div>
+                        <notebook>
+                            <page name="document" string="Document">
+                                <group>
+                                    <group name="lesson_details">
+                                        <field name="course_id"/>
+                                        <field name="type"/>
+                                        <field name="url" attrs="{
+                                            'required': [('type', 'in', ('video'))],
+                                            'invisible': [('type', 'not in', ('video'))]}" />
+                                        
+                                        <field name="datas" string="Attachment"
+                                            attrs="{
+                                                'invisible': [('type', 'not in', ('document', 'image'))]}"/>
+                                    </group>
+                                    <group name="related_details">
+                                        <field name="user_id"/>
+                                        <label for="completion_time"/>
+                                        <div>
+                                            <field name="completion_time" widget="float_time" class="oe_inline"/>
+                                            <span> hours</span>
+                                        </div>
+                                        <field name="visibility"/>
+                                        <field name="content_downloadable" attrs="{'invisible': [('type', 'not in', ['document'])]}"/>
+                                        <field name="date_published" string="Published Date" attrs="{'invisible': [('date_published', '=', False)]}" groups="base.group_no_one"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="description" string="Description">
+                                <field name="description" placeholder="e.g. In this video, we'll give you the keys on how Odoo can help you to grow your business. At the end, we'll propose you a quiz to test your knowledge."/>
+                            </page>
+                            <page name="quiz" string="Quiz">
+                                <group name="quiz_details">
+                                    <group name="quiz_rewards" string="Rewards">
+                                        <group>
+                                            <field string="First attempt" name="quiz_first_attempt_reward"/>
+                                            <field string="Second attempt" name="quiz_second_attempt_reward"/>
+                                            <field string="Third attempt" name="quiz_third_attempt_reward"/>
+                                            <field string="Fourth and more attempt" name="quiz_fourth_attempt_reward"/>
+                                        </group>
+                                    </group>
+                                    <group name="questions" string="Questions">
+                                        <field name="question_ids" nolabel="1">
+                                            <tree edite="true" create="true" delete="true">
+                                                <field name="sequence" widget="handle"/>
+                                                <field name="question"/>
+                                                <field name="response_ids"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+                            </page>
+                            <!-- <page name="statistics" string="Statistics">
+                                <group>
+                                    <group name="view_statistics" string="Views">
+                                        <field string="Member" name="slide_views"/>
+                                        <field string="Public" name="public_views" readonly="1"/>
+                                        <field string="Total" name="total_views"/>
+                                        <hr attrs="{'invisible': [('channel_allow_comment', '!=', True), ('channel_type', '=', 'training')]}"/>
+                                        <field name="channel_type" invisible="1" readonly="1"/>
+                                        <field name="channel_allow_comment" invisible="1" readonly="1"/>
+                                        <field name="likes" attrs="{'invisible': [('channel_type', '=', 'training')]}"/>
+                                        <field name="dislikes" attrs="{'invisible': [('channel_type', '=', 'training')]}"/>
+                                        <field name="comments_count" string="Comments" attrs="{'invisible': [('channel_allow_comment', '!=', True)]}"/>
+                                    </group>
+                                </group>
+                            </page> -->
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- END CONTENT FORM VIEW -->
+
+
+        <!-- START CONTENT KANBAN VIEW -->
+        <record id="content_view_kanban" model="ir.ui.view">
+            <field name="name">content.view.kanban</field>
+            <field name="model">course_certification_management.content</field>
+            <field name="arch" type="xml">
+                <kanban edit="false" class="o_slide_kanban" sample="1">
+                    <field name="id"/>
+                    <field name="course_id"/>
+                    <field name="type"/>
+                    <field name="user_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <t t-set="placeholder" t-value="'/website_slides/static/src/img/channel-training-default.jpg'"/>
+                                <div class="o_kanban_image_fill_left d-none d-md-block"
+                                    t-attf-style="background-image:url('#{kanban_image('course_certification_management.content', 'image', record.id.raw_value,  placeholder)}')">
+                                    <img class="o_kanban_image_inner_pic"
+                                        t-att-alt="record.course_id.value"
+                                        t-att-src="kanban_image('course_certification_management.cours', 'image', record.course_id.raw_value)"/>
+                                </div>
+                                <div class="o_kanban_image rounded-circle d-md-none"
+                                    t-attf-style="background-image:url('#{kanban_image('course_certification_management.content', 'image', record.id.raw_value,  placeholder)}')">
+                                    <img class="o_kanban_image_inner_pic"
+                                        t-att-alt="record.course_id.value"
+                                        t-att-src="kanban_image('course_certification_management.cours', 'image', record.course_id.raw_value)"/>
+                                </div>
+                                <div class="oe_kanban_details d-flex flex-column">
+                                    <strong class="o_kanban_record_title oe_partner_heading"><field name="title"/></strong>
+                                    <div class="text-mutex"><field name="course_id"/></div>
+                                    <div class="o_kanban_tags_section mb-2">
+                                        <span class="oe_kanban_list_many2many">
+                                            <field name="tag_ids" widget="many2many_tags"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_bottom mt-auto d-flex justify-content-between align-items-end">
+                                        <span>
+                                            <i class="fa fa-clock-o mr-2" aria-label="Duration" role="img" title="Duration"/><field name="completion_time" widget="float_time"/>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-question mr-2" aria-label="Number of Questions" role="img" title="Number of Questions"/><field name="questions_count"/>
+                                        </span>
+                                        <!-- <span>
+                                            <i class="fa fa-eye mr-2" aria-label="Views" role="img" title="Views"/><field name="total_views"/>
+                                        </span> -->
+                                        <span>
+                                       
+                                            <t t-if="record.type.raw_value == 'video'">
+                                                <i class="fa fa-file-video-o mr-2" aria-label="Video" role="img" title="Video"/>
+                                            </t>
+                                            <t t-else=""><i class="fa fa-file-pdf-o mr-2" aria-label="Document" role="img" title="Document"/></t>
+                                            <field name="type"/>
+                                        </span>
+                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="content_view_tree" model="ir.ui.view">
+            <field name="name">content.view.tree</field>
+            <field name="model">course_certification_management.content</field>
+            <field name="arch" type="xml">
+                <tree string="Contents" sample="1">
+                    <field name="title"/>
+                    <field name="visibility" invisible="1"/>
+                    <field name="type"/>
+                    <field name="course_id"/>
+                    <field name="date_published"/>
+                    <field name="completion_time"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- <record id="content_action_report" model="ir.actions.act_window">
+            <field name="name">Contents</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">course_certification_management.content</field>
+            <field name="view_mode">graph,tree,form,pivot</field>
+            <field name="view_id" ref="slide_slide_view_graph"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No data yet!
+                </p><p>
+                    Create new content for your eLearning
+                </p>
+            </field>
+        </record> -->
+
+         <record id="content_action" model="ir.actions.act_window">
+            <field name="name">Contents</field>
+            <field name="res_model">course_certification_management.content</field>
+            <field name="view_mode">form,kanban,tree</field>
+             <field name="view_id" ref="content_view_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new lesson
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

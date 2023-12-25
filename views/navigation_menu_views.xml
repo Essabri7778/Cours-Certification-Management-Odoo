@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem name="OnlineLearning" id="navigation_menu_root"/>
+    <!--  START Main top menu elements -->
+    <menuitem name="Course" 
+        id="menu_courses" 
+        parent="navigation_menu_root" 
+        action="course_action_overview"/>
+    <menuitem name="Content" 
+        id="menu_contents" 
+        parent="navigation_menu_root" 
+        action="content_action"/>
+    <menuitem name="Certification" 
+        id="certifications_menu" 
+        parent="navigation_menu_root" 
+        action="certifications_action"/>
+    <menuitem name="Analyse" 
+        id="menu_analyse" 
+        parent="navigation_menu_root" 
+        action="course_action_overview"/>
+
+
+    <menuitem name="Courses"
+        id="menu_report_courses"
+        parent="menu_analyse"
+        action="course_action_report"/>
+     <!-- <menuitem name="Contents"
+        id="website_slides_menu_report_contents"
+        parent="website_slides_menu_report"
+        sequence="2"
+        action="slide_slide_action_report"/>
+    <menuitem name="Reviews"
+        id="website_slides_menu_report_reviews"
+        parent="website_slides_menu_report"
+        sequence="6"
+        action="rating_rating_action_slide_channel_report"/> -->
+    <menuitem name="Quizzes"
+        id="_menu_report_quizzes"
+        parent="menu_analyse"
+        sequence="7"
+        action="content_question_action_report"/> 
+
+    <!-- END REPORTING SUB-MENU -->
+</odoo>

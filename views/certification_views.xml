@@ -1,0 +1,117 @@
+<!-- certification_management/views/certification_views.xml -->
+<odoo>
+    <data>
+        <record id="certifications_kanban_view" model="ir.ui.view">
+            <field name="name">certifications.certifications_kanban_view</field>
+            <field name="model">course_certification_management.certification</field>
+            <field name="arch" type="xml">
+                <kanban string="onlineLearning Overview" class="o_emphasize_colors o_kanban_dashboard o_slide_kanban breadcrumb_item active" edit="false" sample="1">
+                    <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class=" oe_kanban_card oe_kanban_global_click">
+                            <div class="o_dropdown_kanban dropdown">
+                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v" aria-hidden="false"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                    <t t-if="widget.deletable">
+                                        <a class="dropdown-item" role="menuitem" type="delete">Delete</a>
+                                    </t>
+                                    <a class="dropdown-item" role="menuitem" type="edit">
+                                        Edit
+                                    </a>
+                                    <a class="dropdown-item" name="action_view_slides" role="menuitem" type="object">
+                                        Lessons
+                                    </a>
+                                    <a class="dropdown-item" name="action_channel_invite" role="menuitem" type="object">
+                                        Invite
+                                    </a>
+                                </div>
+                            </div>
+                            <div>
+                                <strong><field name="name"/></strong>
+                                <div><field name="photo" widget="image" options="{'preview_image': True}"/></div>
+                                <div><field name="description"/></div>
+                            </div>
+                        </div>
+                    </t>
+                       
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="certifications_view_form" model="ir.ui.view">
+            <field name="name">certifications.form</field>
+            <field name="model">course_certification_management.certification</field>
+            <field name="arch" type="xml">
+                <form string="Certifiction form">
+                    <sheet>
+                            <field name="photo" widget="image" class="oe_avatar"/>
+                            <div class="oe_title">
+                                <label for="name" class="oe_edit_only" string="Certification name"/>
+                                <h1><field name="name" default_focus="1" placeholder="Certification"/></h1>
+                            </div>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description"/>
+                            </page>
+                            <page string="Sessions">
+                                <field name="registration_type">
+                                </field>
+                            </page>
+                            <page string="Questions">
+                                <group>
+                                    
+                                    <!-- Placeholder text when no question is added -->
+                                    <field name="question_ids" widget="one2many_tage">
+                                      <!-- <tree editable="bottom" create="true" delete="true">
+                                        <field name="section" string="Section title" />
+                                        <field name="question_text" string="Question" />
+                                      </tree> -->
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Configuration">
+                                <group>
+                                    <field name="scoring_type" widget="radio"/>
+                                    <field name="success_percentage" attrs="{'invisible': [('scoring_type', '=', 'no_scoring')]}"/>
+                                    <field name="test_layout" widget="radio"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- START COURSE TREE VIEW -->
+        <record id="course_view_tree" model="ir.ui.view">
+                <field name="name">course.view.tree</field>
+                <field name="model">course_certification_management.certification</field>
+                <field name="arch" type="xml">
+                    <tree string="Courses" sample="1">
+                        <field name="sequence" widget="handle"/>
+                        <field name="name"/>
+                        <field name="scoring_type" />
+                        <field name="success_percentage"/>
+                    </tree>
+                </field>
+        </record>
+        <!-- END COURSE TREE VIEW -->
+
+        <record id="certifications_action" model="ir.actions.act_window">
+            <field name="name">Certifications</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">course_certification_management.certification</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <!-- <field name="view_id" ref="certifications.certifications_kanban_view"/> -->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Manage Certifications.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

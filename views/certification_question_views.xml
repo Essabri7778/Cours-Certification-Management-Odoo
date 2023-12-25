@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record id="Question_action" model="ir.actions.act_window">
+            <field name="name">Questions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">course_certification_management.certification_question</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <record id="certifications_question_form" model="ir.ui.view">
+            <field name="name">certifications.question.form</field>
+            <field name="model">course_certification_management.certification_question</field>
+            <field name="arch" type="xml">
+            <form string="Questions Form">
+            <sheet>
+                <group>
+                    <field name="question_text" placeholder="Certification"/>
+                    <field name="description" placeholder="Question explicatif text"/>
+
+                    <field name="photo" widget="image"/>
+                    
+                    <field name="answer_type"/>
+                    <!-- Corrected field name -->
+                    
+                    <field name="answer" attrs="{'invisible': [('answer_type', '!=', 'fill_blank')]}"/>
+                    <field name="one_option" widget="one2one" attrs="{'invisible': [('answer_type', '!=', 'single')]}">
+                        <tree editable="bottom">
+                            <field name="option_text"/>
+                            <field name="is_correct" widget="boolean"/>
+                        </tree>
+                    </field>
+                    <field name="options" widget="one2many_tage" attrs="{'invisible': [('answer_type', '!=', 'multiple')]}">
+                        <tree editable="bottom">
+                            <field name="option_text"/>
+                            <field name="is_correct" widget="boolean"/>
+                        </tree>
+                    </field>
+                </group>
+            </sheet>
+            </form>
+            </field>
+        </record>
+
+        
+
+    </data>
+</odoo>

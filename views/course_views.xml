@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <data>
+    
+    <!-- START COURSE FORM VIEW  -->
+    <record id="course_view_form" model="ir.ui.view">
+        <field name="name">course.view.form</field>
+        <field name="model">course_certification_management.course</field>
+        <field name="arch" type="xml">
+            <form string="Courses">
+            <sheet>
+                <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="title" class="oe_edit_only" string="Course Title"/>
+                        <h1><field name="title" default_focus="1" placeholder="Computer Science for kids"/></h1>
+                </div>
+                <group>
+                    <field name="level" widget="radio" options="{'horizontal': true}"/>
+                </group>
+                <group colspan = "2">
+                    <field name="tag_ids" widget="many2many_tags"  col="2"/>
+                </group>
+                
+                
+                <notebook colspan="4">
+                    <page name="content" string="Content">
+                        <field name="content_ids" context="{'default_course_id': active_id}">
+                                <tree edite="true" create="true" delete="true">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="title"/>
+                                    <field name="type"/>
+                                    <field name="completion_time" widget="float_time"/>
+                                    <field name="visibility" widget="boolean_checkbox" />
+                                    <control>
+                                        <create name="action_course_content_form" string="Add Content"/>
+                                    </control>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="certifications" string="Certifications">
+                        <field name="certification_ids">
+                            <tree edite="true" create="true" delete="true">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="description"/>
+                                <control>
+                                    <create name="action_course_certification_form" string="Add Certification"/>
+                                </control>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Description">
+                            <group>
+                                <!-- Description -->
+                               <div>
+                                    <field name="description" colspan="4" placeholder="write a consice description about your course"/>
+                                </div>
+                            </group>
+                    </page>
+                    <page string="More Details">
+                            <group>
+                             <group>
+                                <field name="responsible_id" colspan="3"/>
+                             </group>
+                            <group>
+                                <field name="visibility" widget="boolean_checkbox" colspan="3" />
+                            </group>
+                            </group>
+                    </page>
+                </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- END COURSE VIEW FORM -->
+
+
+    <!-- START COURSE KANBAN VIEW --> 
+    <record id="course_view_kanban" model="ir.ui.view">
+        <field name="name">course.view.kanban</field>
+        <field name="model">course_certification_management.course</field>
+        <field name="arch" type="xml">
+            <kanban string="onlineLearning Overview" class="o_emphasize_colors o_kanban_dashboard o_slide_kanban breadcrumb_item active" edit="false" sample="1">
+                <field name="color"/>
+                <!-- <field name="website_published"/> -->
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+                            <div class="o_dropdown_kanban dropdown">
+                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v" aria-hidden="false"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                    <t t-if="widget.deletable">
+                                        <a class="dropdown-item" role="menuitem" type="delete">Delete</a>
+                                    </t>
+                                    <a class="dropdown-item" role="menuitem" type="edit">
+                                        Edit
+                                    </a>
+                                    <a class="dropdown-item" name="action_view_slides" role="menuitem" type="object">
+                                        Lessons
+                                    </a>
+                                    <a class="dropdown-item" name="action_channel_invite" role="menuitem" type="object">
+                                        Invite
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title mb16">
+                                    <div class="o_primary">
+                                        <a type="edit" class="mr-auto">
+                                            <span><field name="title" class="o_primary"/></span>
+                                        </a>
+                                    </div>
+                                    <div t-if="record.tag_ids">
+                                        <field name="tag_ids" widget="many2many_tags"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content mt0">
+                                <div class="row mb16">
+                                    <div class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="open_website_url" type="object">View course</button>
+                                    </div>
+                                    <div class="col-6 o_kanban_primary_right">
+                                        <div class="d-flex" t-if="record.rates.raw_value">
+                                            <a name="action_view_ratings" type="object" class="mr-auto"><field name="rating_count"/> reviews</a>
+                                            <span><field name="rates"/> / 5</span>
+                                        </div>
+                                        <!-- <div class="d-flex">
+                                            <span class="mr-auto"><label for="total_views" class="mb0">Views</label></span>
+                                            <field name="total_views"/>
+                                        </div> -->
+                                        <div class="d-flex" name="info_total_time">
+                                            <span class="mr-auto"><label for="duration" class="mb0">Duration</label></span>
+                                            <field name="duration" widget="float_time"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt3">
+                                    <div class="col-4 border-right">
+                                        <a name="action_view_slides" type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold"><field name="nbr_contents"/></span>
+                                            <span class="text-muted">Contents</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4 border-right">
+                                        <a name="action_redirect_to_members" type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold"><field name="nbr_participants"/></span>
+                                            <span class="text-muted">Attendees</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a name="action_redirect_to_done_members" type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold"><field name="members_done_count"/></span>
+                                            <span name="done_members_count_label" class="text-muted">Finished</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- END COURSE KANBAN VIEW -->
+
+
+    <!-- START COURSE TREE VIEW -->
+    <record id="course_view_tree" model="ir.ui.view">
+            <field name="name">course.view.tree</field>
+            <field name="model">course_certification_management.course</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree string="Courses" sample="1">
+                    <field name="sequence" widget="handle"/>
+                    <field name="title"/>
+                    <field name="responsible_id" widget="many2one_avatar_user"/>
+                    <field name="level" />
+                    <field name="visibility"/>
+                </tree>
+            </field>
+    </record>
+    <!-- END COURSE TREE VIEW -->
+
+    <!-- START COURSE TREE REPORT VIEW -->
+    <record id="course_view_tree_report" model="ir.ui.view">
+        <field name="name">course.view.tree.report</field>
+        <field name="model">course_certification_management.course</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree string="Courses" create="false" sample="1">
+                <field name="title"/>
+                <field name="duration" widget="float_time" />
+                <field name="nbr_participants"/>
+            </tree>
+        </field>
+    </record>
+    <!-- END COURSE TREE REPORT VIEW -->
+
+    <!-- START COURSE SEARCH VIEW -->
+    <record id="course_view_search" model="ir.ui.view">
+        <field name="name">course.view.search</field>
+        <field name="model">course_certification_management.course</field>
+        <field name="arch" type="xml">
+            <search string="Courses">
+                <field name="title" string="Course"/>
+                <filter string="Archived" name="inactive" domain="[('visibility','=',False)]"/>
+                <filter name="tag_filter" string="Tag" context="{'group_by': 'tag_ids'}"/>
+            </search>
+        </field>
+    </record>
+    <!-- END COURSE SEARCH VIEW -->
+
+    <!-- START COURSE GRAPH VIEW -->
+    <record id="course_view_graph" model="ir.ui.view">
+        <field name="name">course.view.graph</field>
+        <field name="model">course_certification_management.course</field>
+        <field name="arch" type="xml">
+            <graph string="Courses" type="bar" sample="1">
+                <field name="title"/>
+                <field name="nbr_contents" type="measure"/>
+                <field name="nbr_participants" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <!-- END COURSE GRAPH VIEW -->
+
+    <!-- START COURSE OVERVIEW NAVIGATION -->
+    <record id="course_action_overview" model="ir.actions.act_window">
+        <field name="name">OnlineLearning Overview</field>
+        <field name="res_model">course_certification_management.course</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_id" ref="course_view_kanban"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a course
+            </p>
+        </field>
+    </record>
+    <!-- END COURSE OVERVIEW NAVIGATION -->
+
+    <!-- START COURSE REPORT NAVIGATION -->
+    <record id="course_action_report" model="ir.actions.act_window">
+        <field name="name">Courses</field>
+        <field name="res_model">course_certification_management.course</field>
+        <field name="view_mode">tree,graph,form</field>
+        <field name="view_id" ref="course_view_tree_report"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a course
+            </p>
+        </field>
+    </record>
+    <!-- END COURSE REPORT NAVIGATION -->
+
+    </data>
+</odoo>

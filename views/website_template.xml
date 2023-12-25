@@ -1,0 +1,36 @@
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+<template id="home_page">
+    <t t-call="website.layout">
+        <div id="wrap">
+            <div class="oe_structure"/>
+            <header>
+                <button type="button" class="btn btn-primary">Sign In/Sign Up</button>
+            </header>
+            <main>
+                <section class="container">
+                    <div class="row">
+                        <t t-foreach="courses" t-as="course">
+                            <div class="col-md-4">
+                                <div class="card mb-4">
+                                    <img t-if="course.image" t-att-src="course.image" class="card-img-top" alt="Course Image"/>
+                                    <div class="card-body">
+                                        <h5 class="card-title" t-field="course.title"/>
+                                        <p class="card-text" t-field="course.duration"/>
+                                        <a t-attf-href="/course/{{ course.id }}" class="btn btn-primary">View Course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </section>
+            </main>
+            <footer>
+                <p>Developed by Essabri</p>
+            </footer>
+        </div>
+    </t>
+</template>
+</data>
+</odoo> -->
