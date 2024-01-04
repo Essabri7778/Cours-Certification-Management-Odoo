@@ -42,7 +42,10 @@
                             <tree edite="true" create="true" delete="true">
                                 <field name="sequence" widget="handle"/>
                                 <field name="name"/>
-                                <field name="description"/>
+                                <field name="scoring_type" />
+                                <field name="registration_type"/> 
+                                <field name="success_percentage"/>
+                                <field name="completion_time" widget="float_time"/>
                                 <control>
                                     <create name="action_course_certification_form" string="Add Certification"/>
                                 </control>
@@ -124,39 +127,35 @@
                                         <button class="btn btn-primary" name="open_website_url" type="object">View course</button>
                                     </div>
                                     <div class="col-6 o_kanban_primary_right">
-                                        <div class="d-flex" t-if="record.rates.raw_value">
-                                            <a name="action_view_ratings" type="object" class="mr-auto"><field name="rating_count"/> reviews</a>
-                                            <span><field name="rates"/> / 5</span>
+                                        <div class="d-flex" >
+                                            <span class="mr-auto"></span>
+                                            <field name="level"/>
                                         </div>
-                                        <!-- <div class="d-flex">
-                                            <span class="mr-auto"><label for="total_views" class="mb0">Views</label></span>
-                                            <field name="total_views"/>
-                                        </div> -->
                                         <div class="d-flex" name="info_total_time">
-                                            <span class="mr-auto"><label for="duration" class="mb0">Duration</label></span>
-                                            <field name="duration" widget="float_time"/>
+                                            <span class="mr-auto"><label for="duration" class="mb0">Lessons</label></span>
+                                            <field name="duration" widget="float_time"/><span> h</span>
+                                        </div>
+                                        <div class="d-flex" name="info_total_time">
+                                            <span class="mr-auto"><label for="duration" class="mb0">Certification</label></span>
+                                            <field name="certification_duration" widget="float_time"/>  <span> h</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt3">
-                                    <div class="col-4 border-right">
-                                        <a name="action_view_slides" type="object" class="d-flex flex-column align-items-center">
+                                <div class="row mt2">
+                                    <div class="col-6 border-right">
+                                        <a href="#" type="object" class="d-flex flex-column align-items-center">
                                             <span class="font-weight-bold"><field name="nbr_contents"/></span>
                                             <span class="text-muted">Contents</span>
                                         </a>
+                                        
                                     </div>
-                                    <div class="col-4 border-right">
-                                        <a name="action_redirect_to_members" type="object" class="d-flex flex-column align-items-center">
-                                            <span class="font-weight-bold"><field name="nbr_participants"/></span>
-                                            <span class="text-muted">Attendees</span>
+                                    <div class="col-6 border-right">
+                                        <a href="#" type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold"><field name="nbr_certifications"/></span>
+                                            <span class="text-muted">Certifications</span>
                                         </a>
                                     </div>
-                                    <div class="col-4">
-                                        <a name="action_redirect_to_done_members" type="object" class="d-flex flex-column align-items-center">
-                                            <span class="font-weight-bold"><field name="members_done_count"/></span>
-                                            <span name="done_members_count_label" class="text-muted">Finished</span>
-                                        </a>
-                                    </div>
+                                    
                                 </div>
                             </div> 
                         </div>
@@ -172,7 +171,6 @@
     <record id="course_view_tree" model="ir.ui.view">
             <field name="name">course.view.tree</field>
             <field name="model">course_certification_management.course</field>
-            <field name="priority">20</field>
             <field name="arch" type="xml">
                 <tree string="Courses" sample="1">
                     <field name="sequence" widget="handle"/>
@@ -180,25 +178,11 @@
                     <field name="responsible_id" widget="many2one_avatar_user"/>
                     <field name="level" />
                     <field name="visibility"/>
+                    <field name="date_published"/>
                 </tree>
             </field>
     </record>
     <!-- END COURSE TREE VIEW -->
-
-    <!-- START COURSE TREE REPORT VIEW -->
-    <record id="course_view_tree_report" model="ir.ui.view">
-        <field name="name">course.view.tree.report</field>
-        <field name="model">course_certification_management.course</field>
-        <field name="priority">20</field>
-        <field name="arch" type="xml">
-            <tree string="Courses" create="false" sample="1">
-                <field name="title"/>
-                <field name="duration" widget="float_time" />
-                <field name="nbr_participants"/>
-            </tree>
-        </field>
-    </record>
-    <!-- END COURSE TREE REPORT VIEW -->
 
     <!-- START COURSE SEARCH VIEW -->
     <record id="course_view_search" model="ir.ui.view">
@@ -206,9 +190,24 @@
         <field name="model">course_certification_management.course</field>
         <field name="arch" type="xml">
             <search string="Courses">
+            <!-- searche -->
                 <field name="title" string="Course"/>
+                <field name="responsible_id"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+
+            <!-- filter -->
                 <filter string="Archived" name="inactive" domain="[('visibility','=',False)]"/>
-                <filter name="tag_filter" string="Tag" context="{'group_by': 'tag_ids'}"/>
+                <filter string="Beginner" name="beginner_level" domain="[('level', '=', 'beginner')]"/>
+                <filter string="Intermediate" name="intermediate_level" domain="[('level', '=', 'intermediate')]"/>
+                <filter string="Advanced" name="advanced_level" domain="[('level', '=', 'advanced')]"/>
+            <!-- group by -->
+                 <group expand="1" string="Group by">
+                    <filter string="Level" name="group_by_level" context="{'group_by': 'level'}"/>
+                    <filter string="Responsible" name="group_by_responsible" context="{'group_by': 'responsible_id'}"/>
+
+                    <filter string="Published Date" name="group_by_published_date" context="{'group_by': 'date_published'}"/>
+                </group>
+                
             </search>
         </field>
     </record>
@@ -229,10 +228,10 @@
     <!-- END COURSE GRAPH VIEW -->
 
     <!-- START COURSE OVERVIEW NAVIGATION -->
-    <record id="course_action_overview" model="ir.actions.act_window">
-        <field name="name">OnlineLearning Overview</field>
+        <record id="course_action_main" model="ir.actions.act_window">
+        <field name="name">Courses</field>
         <field name="res_model">course_certification_management.course</field>
-        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_mode">kanban,tree,form,graph,search</field>
         <field name="view_id" ref="course_view_kanban"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -243,17 +242,7 @@
     <!-- END COURSE OVERVIEW NAVIGATION -->
 
     <!-- START COURSE REPORT NAVIGATION -->
-    <record id="course_action_report" model="ir.actions.act_window">
-        <field name="name">Courses</field>
-        <field name="res_model">course_certification_management.course</field>
-        <field name="view_mode">tree,graph,form</field>
-        <field name="view_id" ref="course_view_tree_report"/>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create a course
-            </p>
-        </field>
-    </record>
+
     <!-- END COURSE REPORT NAVIGATION -->
 
     </data>

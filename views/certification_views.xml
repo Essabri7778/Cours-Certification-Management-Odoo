@@ -5,42 +5,40 @@
             <field name="name">certifications.certifications_kanban_view</field>
             <field name="model">course_certification_management.certification</field>
             <field name="arch" type="xml">
-                <kanban string="onlineLearning Overview" class="o_emphasize_colors o_kanban_dashboard o_slide_kanban breadcrumb_item active" edit="false" sample="1">
+                <kanban string="onlineLearning Overview" class=" o_slide_kanban" edit="false" sample="1">
+                    <field name="id"/>
+                    <field name="course_id"/>
+
+                    
                     <templates>
-                    <t t-name="kanban-box">
-                        <div t-attf-class=" oe_kanban_card oe_kanban_global_click">
-                            <div class="o_dropdown_kanban dropdown">
-                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
-                                    <span class="fa fa-ellipsis-v" aria-hidden="false"/>
-                                </a>
-                                <div class="dropdown-menu" role="menu">
-                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                    <t t-if="widget.deletable">
-                                        <a class="dropdown-item" role="menuitem" type="delete">Delete</a>
-                                    </t>
-                                    <a class="dropdown-item" role="menuitem" type="edit">
-                                        Edit
-                                    </a>
-                                    <a class="dropdown-item" name="action_view_slides" role="menuitem" type="object">
-                                        Lessons
-                                    </a>
-                                    <a class="dropdown-item" name="action_channel_invite" role="menuitem" type="object">
-                                        Invite
-                                    </a>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                
+                                <div class="o_kanban_image_fill_left d-none d-md-block"
+                                    t-attf-style="background-image:url('#{kanban_image('course_certification_management.certification', 'photo', record.id.raw_value,  placeholder)}')"> 
+                                </div>
+                                <div class="oe_kanban_details d-flex flex-column">
+                                    <strong class="o_kanban_record_title oe_partner_heading"><field name="name"/></strong>
+                                    <div class="text-mutex"><field name="course_id"/></div>
+        
+                                    <div class="o_kanban_record_bottom mt-auto d-flex justify-content-between align-items-end">
+                                        <span>
+                                            <i class="fa fa-clock-o mr-2" aria-label="Duration" role="img" title="Duration"/><field name="completion_time" widget="float_time"/>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-question mr-2" aria-label="Number of Questions" role="img" title="Number of Questions"/><field name="questions_count"/>
+                                        </span>
+            
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <strong><field name="name"/></strong>
-                                <div><field name="photo" widget="image" options="{'preview_image': True}"/></div>
-                                <div><field name="description"/></div>
-                            </div>
-                        </div>
-                    </t>
-                       
+                        </t>
                     </templates>
                 </kanban>
             </field>
         </record>
+
+
 
         <record id="certifications_view_form" model="ir.ui.view">
             <field name="name">certifications.form</field>
@@ -54,32 +52,42 @@
                                 <h1><field name="name" default_focus="1" placeholder="Certification"/></h1>
                             </div>
                         <notebook>
-                            <page string="Description">
-                                <field name="description"/>
-                            </page>
-                            <page string="Sessions">
-                                <field name="registration_type">
-                                </field>
-                            </page>
-                            <page string="Questions">
+                            <page string="Details">
+                            <group>
                                 <group>
-                                    
-                                    <!-- Placeholder text when no question is added -->
-                                    <field name="question_ids" widget="one2many_tage">
-                                      <!-- <tree editable="bottom" create="true" delete="true">
-                                        <field name="section" string="Section title" />
-                                        <field name="question_text" string="Question" />
-                                      </tree> -->
-                                    </field>
-                                </group>
-                            </page>
-                            <page string="Configuration">
-                                <group>
+                                    <field name="course_id"/>
+                                    <field name="registration_type"/>
                                     <field name="scoring_type" widget="radio"/>
+                                </group>
+                                <group>
+                                    <label for="completion_time"/>
+                                        <div>
+                                            <field name="completion_time" widget="float_time" class="oe_inline"/>
+                                            <span> hours</span>
+                                        </div>
                                     <field name="success_percentage" attrs="{'invisible': [('scoring_type', '=', 'no_scoring')]}"/>
                                     <field name="test_layout" widget="radio"/>
                                 </group>
+                            </group>
+                                
                             </page>
+                            <page string="Description">
+                                <field name="description" colspan="4" placeholder="write a consice description about your certification"/>
+                            </page>
+                            <page string="Questions">
+                               <field name="question_ids" context="{'default_question_ids': active_id}">
+                                <tree edite="true" create="true" delete="true">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="question_text"/>
+                                    <field name="answer_type"/>
+                                    <field name="description"/> 
+                                    <control>
+                                        <create name="action_certification_question_form" string="Add Question"/>
+                                    </control>
+                            </tree>
+                        </field>
+                            </page>
+                            
                         </notebook>
                     </sheet>
                 </form>
@@ -87,26 +95,72 @@
         </record>
 
         <!-- START COURSE TREE VIEW -->
-        <record id="course_view_tree" model="ir.ui.view">
-                <field name="name">course.view.tree</field>
+        <record id="certifications_view_tree" model="ir.ui.view">
+                <field name="name">certifications.view.tree</field>
                 <field name="model">course_certification_management.certification</field>
                 <field name="arch" type="xml">
                     <tree string="Courses" sample="1">
                         <field name="sequence" widget="handle"/>
                         <field name="name"/>
+                        <field name="course_id"/>
+                        <field name="registration_type"/> 
                         <field name="scoring_type" />
                         <field name="success_percentage"/>
+                        <field name="completion_time" widget="float_time"/>
                     </tree>
                 </field>
         </record>
         <!-- END COURSE TREE VIEW -->
 
+
+<!-- START COURSE SEARCH VIEW -->
+    <record id="certifications_view_search" model="ir.ui.view">
+        <field name="name">certifications.view.search</field>
+        <field name="model">course_certification_management.certification</field>
+        <field name="arch" type="xml">
+            <search string="Certifications">
+            <!-- searche -->
+                <field name="name"/>
+
+            <!-- filter -->
+                <filter string="Private" name="private_registration" domain="[('registration_type', '=', 'private')]"/>
+                <filter string="Public" name="public_registration" domain="[('registration_type', '=', 'public')]"/>
+                <filter string="Invitation" name="invitation_registration" domain="[('registration_type', '=', 'invitation')]"/>
+
+                <filter string="No Scoring" name="no_scoring" domain="[('scoring_type', '=', 'no_scoring')]"/>
+                <filter string="Scoring with answers at the end" name="with_answers" domain="[('scoring_type', '=', 'with_answers')]"/>
+                <filter string="Scoring without answers at the end" name="without_answers" domain="[('scoring_type', '=', 'without_answers')]"/>
+            <!-- group by -->
+                 <group expand="1" string="Group by">
+                    <filter string="Registration Type" name="group_by_registration_type" context="{'group_by': 'registration_type'}"/>
+                    <filter string="Scoring Type" name="group_by_scoring_type" context="{'group_by': 'scoring_type'}"/>
+                    <filter string="Course" name="group_by_course" context="{'group_by': 'course_id'}"/>
+                </group>
+                
+            </search>
+        </field>
+    </record>
+    <!-- END COURSE SEARCH VIEW -->
+
+    <!-- START COURSE GRAPH VIEW -->
+    <record id="certification_view_graph" model="ir.ui.view">
+        <field name="name">certification.view.graph</field>
+        <field name="model">course_certification_management.certification</field>
+        <field name="arch" type="xml">
+            <graph string="Courses" type="bar" sample="1">
+                <field name="name"/>
+                
+            </graph>
+        </field>
+    </record>
+    <!-- END COURSE GRAPH VIEW -->
+
         <record id="certifications_action" model="ir.actions.act_window">
             <field name="name">Certifications</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">course_certification_management.certification</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <!-- <field name="view_id" ref="certifications.certifications_kanban_view"/> -->
+            <field name="view_mode">tree,form,kanban,search,graph</field>
+            <field name="view_id" ref="certifications_kanban_view"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Manage Certifications.

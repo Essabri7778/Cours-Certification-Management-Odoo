@@ -22,7 +22,7 @@ class Content(models.Model):
     visibility = fields.Boolean(string='Visibility')
     completion_time = fields.Float(string='Completion Time', help='Estimated completion time in hours')
     user_id = fields.Many2one('res.users', string='Uploaded by', default=lambda self: self.env.uid)
-    date_published = fields.Datetime('Publish Date', readonly=True, tracking=1)
+    date_published = fields.Datetime('Publish Date', readonly=True, default=fields.Datetime.now)
     
     # Resources
     datas = fields.Binary('Content', attachment=True)

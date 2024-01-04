@@ -14,10 +14,10 @@
             <form string="Questions Form">
             <sheet>
                 <group>
-                    <field name="question_text" placeholder="Certification"/>
+                    <field name="question_text" placeholder="Question Text" string="Question"/>
                     <field name="description" placeholder="Question explicatif text"/>
 
-                    <field name="photo" widget="image"/>
+                    <field name="photo"/>
                     
                     <field name="answer_type"/>
                     <!-- Corrected field name -->

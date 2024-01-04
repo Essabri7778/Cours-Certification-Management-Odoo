@@ -16,8 +16,7 @@ class Course(models.Model):
     color = fields.Char(string='Color')
     sequence = fields.Integer('Sequence', default=0)
     # Still neede thinking 
-    rates = fields.Float(string='Rates')
-    rating_count = fields.Integer(string='Rating Count')
+
     # Option
     level = fields.Selection([
             ('beginner', 'Beginner'),
@@ -26,6 +25,8 @@ class Course(models.Model):
         ], string='Level', default='beginner')
     responsible_id = fields.Many2one('res.users', string='Responsible')
     visibility = fields.Boolean(string='Visibility')
+    date_published = fields.Datetime('Publish Date', readonly=True, default=fields.Datetime.now)
+
     
     # Content
     content_ids = fields.One2many('course_certification_management.content', 'course_id', string='Contents')
@@ -37,8 +38,10 @@ class Course(models.Model):
 
     # Computed Fields
     duration = fields.Float(string='Duration', compute='_compute_duration')
+    certification_duration = fields.Float(string='Duration', compute='_compute_certification_duration')
     nbr_participants = fields.Integer(string='Number of Participants', compute='_compute_nbr_participants')
     nbr_contents = fields.Integer(string='Number of Contents', compute='_compute_nbr_contents')
+    nbr_certifications = fields.Integer(string='Number of Contents', compute='_compute_nbr_certifications')
     members_done_count = fields.Integer(string='Number of done', compute='_compute_members_done_count')
 
    
@@ -50,6 +53,11 @@ class Course(models.Model):
     def _compute_nbr_contents(self):
         for course in self:
             course.nbr_contents = len(course.content_ids)
+
+    @api.depends('content_ids')
+    def _compute_nbr_certifications(self):
+        for course in self:
+            course.nbr_certifications = len(course.certification_ids)
     
     @api.depends('participant_ids')
     def _compute_nbr_participants(self):
@@ -65,6 +73,13 @@ class Course(models.Model):
     def _compute_duration(self):
         for course in self:
             course.duration = sum(course.content_ids.mapped('completion_time'))
+    
+    @api.depends('certification_ids.completion_time')
+    def _compute_certification_duration(self):
+        for course in self:
+            course.certification_duration = sum(course.certification_ids.mapped('completion_time'))
+
+    
     
 
     def open_website_url(self):
